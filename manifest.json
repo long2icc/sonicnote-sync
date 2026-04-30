@@ -1,0 +1,9 @@
+{
+  "id": "znote-sync",
+  "name": "Znote Sync",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Sync recordings from Znote (SonicNote) to Obsidian as Markdown files",
+  "author": "EasyLink",
+  "isDesktopOnly": false
+}
