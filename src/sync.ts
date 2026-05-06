@@ -1,18 +1,18 @@
 import { App, Notice, TFile, TFolder } from 'obsidian';
-import { ZnoteApiClient } from './api';
-import { ZnotePluginSettings, LocalFileInfo, Recording, SyncResult, TranscriptSegment, SummaryData } from './types';
+import { SonicNoteApiClient } from './api';
+import { SonicNotePluginSettings, LocalFileInfo, Recording, SyncResult, TranscriptSegment, SummaryData } from './types';
 import { formatFileName, toMarkdown } from './formatter';
 
 export class SyncService {
-  private api: ZnoteApiClient;
+  private api: SonicNoteApiClient;
   private app: App;
-  private getSettings: () => ZnotePluginSettings;
+  private getSettings: () => SonicNotePluginSettings;
   private saveSettings: () => Promise<void>;
 
   constructor(
     app: App,
-    api: ZnoteApiClient,
-    getSettings: () => ZnotePluginSettings,
+    api: SonicNoteApiClient,
+    getSettings: () => SonicNotePluginSettings,
     saveSettings: () => Promise<void>
   ) {
     this.app = app;
@@ -113,7 +113,7 @@ export class SyncService {
     return match ? match[1] : null;
   }
 
-  private async processRecording(recording: Recording, localIndex: Map<string, LocalFileInfo>, settings: ZnotePluginSettings): Promise<void> {
+  private async processRecording(recording: Recording, localIndex: Map<string, LocalFileInfo>, settings: SonicNotePluginSettings): Promise<void> {
     const syncTime = new Date().toISOString();
 
     // Check if we need to update
@@ -150,7 +150,7 @@ export class SyncService {
     });
   }
 
-  private async writeRecordingToNewFile(recording: Recording, syncTime: string, settings: ZnotePluginSettings, conflictWithPath?: string): Promise<void> {
+  private async writeRecordingToNewFile(recording: Recording, syncTime: string, settings: SonicNotePluginSettings, conflictWithPath?: string): Promise<void> {
     const content = await this.buildRecordingContent(recording, syncTime);
     let fileName = formatFileName(recording);
 

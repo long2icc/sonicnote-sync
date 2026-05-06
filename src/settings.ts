@@ -1,17 +1,17 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { ZnoteApiClient } from './api';
-import { ZnotePluginSettings, DEFAULT_SETTINGS } from './types';
+import { SonicNoteApiClient } from './api';
+import { SonicNotePluginSettings, DEFAULT_SETTINGS } from './types';
 
-export class ZnoteSettingTab extends PluginSettingTab {
-  private api: ZnoteApiClient;
-  private getSettings: () => ZnotePluginSettings;
+export class SonicNoteSettingTab extends PluginSettingTab {
+  private api: SonicNoteApiClient;
+  private getSettings: () => SonicNotePluginSettings;
   private saveSettings: () => Promise<void>;
 
   constructor(
     app: App,
     plugin: Plugin,
-    api: ZnoteApiClient,
-    getSettings: () => ZnotePluginSettings,
+    api: SonicNoteApiClient,
+    getSettings: () => SonicNotePluginSettings,
     saveSettings: () => Promise<void>
   ) {
     super(app, plugin);
@@ -25,26 +25,14 @@ export class ZnoteSettingTab extends PluginSettingTab {
     const settings = this.getSettings();
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: 'Znote Sync 设置' });
-
-    // Server URL
-    new Setting(containerEl)
-      .setName('服务器地址')
-      .setDesc('智音笔记后端服务地址')
-      .addText(text => text
-        .setPlaceholder('http://localhost:8048')
-        .setValue(settings.serverUrl)
-        .onChange(async (value) => {
-          settings.serverUrl = value;
-          await this.saveSettings();
-        }));
+    containerEl.createEl('h2', { text: 'SonicNote Sync 设置' });
 
     // Sync folder
     new Setting(containerEl)
       .setName('同步文件夹')
       .setDesc('录音 Markdown 文件存放的文件夹（相对于 Vault 根目录）')
       .addText(text => text
-        .setPlaceholder('ZnoteSync')
+        .setPlaceholder('SonicNoteSync')
         .setValue(settings.syncFolder)
         .onChange(async (value) => {
           settings.syncFolder = value;
@@ -83,15 +71,15 @@ export class ZnoteSettingTab extends PluginSettingTab {
 }
 
 class LoginModal extends Modal {
-  private api: ZnoteApiClient;
-  private getSettings: () => ZnotePluginSettings;
+  private api: SonicNoteApiClient;
+  private getSettings: () => SonicNotePluginSettings;
   private saveSettings: () => Promise<void>;
   private onCloseCallback: () => void;
 
   constructor(
     app: App,
-    api: ZnoteApiClient,
-    getSettings: () => ZnotePluginSettings,
+    api: SonicNoteApiClient,
+    getSettings: () => SonicNotePluginSettings,
     saveSettings: () => Promise<void>,
     onCloseCallback: () => void
   ) {
@@ -106,7 +94,7 @@ class LoginModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
 
-    contentEl.createEl('h2', { text: '登录智音笔记' });
+    contentEl.createEl('h2', { text: '登录 SonicNote' });
 
     let phone = '';
     let code = '';
@@ -118,9 +106,10 @@ class LoginModal extends Modal {
         .onChange((value) => { phone = value; }));
 
     new Setting(contentEl)
-      .setName('验证码')
+      .setName('密码')
+      .setDesc('使用 APP 验证码或者申领长期密码')
       .addText(text => text
-        .setPlaceholder('请输入验证码')
+        .setPlaceholder('请输入密码')
         .onChange((value) => { code = value; }));
 
     new Setting(contentEl)
@@ -129,7 +118,7 @@ class LoginModal extends Modal {
         .setCta()
         .onClick(async () => {
           if (!phone || !code) {
-            new Notice('请输入手机号和验证码');
+            new Notice('请输入手机号和密码');
             return;
           }
           try {

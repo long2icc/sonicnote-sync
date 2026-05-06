@@ -1,13 +1,13 @@
 {
-  "name": "znote-sync",
+  "name": "sonicnote-sync",
   "version": "1.0.0",
-  "description": "Sync recordings from Znote (SonicNote) to Obsidian as Markdown files",
+  "description": "Sync recordings from SonicNote to Obsidian as Markdown files",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
   },
-  "keywords": ["obsidian", "znote", "recording", "sync"],
+  "keywords": ["obsidian", "sonicnote", "recording", "sync"],
   "author": "EasyLink",
   "license": "MIT",
   "devDependencies": {

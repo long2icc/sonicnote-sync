@@ -1,8 +1,8 @@
 import { requestUrl, RequestUrlParam } from 'obsidian';
-import { BackendResponse, Recording, TranscriptSegment, SummaryData, ZnotePluginSettings } from './types';
+import { BackendResponse, Recording, TranscriptSegment, SummaryData, SonicNotePluginSettings } from './types';
 
-export class ZnoteApiClient {
-  constructor(private getSettings: () => ZnotePluginSettings) {}
+export class SonicNoteApiClient {
+  constructor(private getSettings: () => SonicNotePluginSettings) {}
 
   isAuthenticated(): boolean {
     return this.getSettings().token !== '';
@@ -31,19 +31,25 @@ export class ZnoteApiClient {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
-    const params: RequestUrlParam = {
-      url,
-      method,
-      headers,
-    };
-
     if (method === 'POST' && options?.body) {
       headers['Content-Type'] = 'application/json';
-      params.body = JSON.stringify(options.body);
     }
 
-    const response = await requestUrl(params);
-    return response.json as BackendResponse;
+    try {
+      const response = await requestUrl({
+        url,
+        method,
+        headers,
+        body: method === 'POST' && options?.body ? JSON.stringify(options.body) : undefined,
+      });
+      return response.json as BackendResponse;
+    } catch (e: any) {
+      // requestUrl throws on non-2xx status codes; try to extract the body
+      if (e?.json) {
+        return e.json as BackendResponse;
+      }
+      throw new Error(e?.message || `请求失败: ${method} ${path}`);
+    }
   }
 
   async login(phone: string, code: string): Promise<{ token: string; userId: string }> {
@@ -53,9 +59,14 @@ export class ZnoteApiClient {
     if (res.code !== 200) {
       throw new Error(res.msg || '登录失败');
     }
+    const data = res.data;
+    const token = typeof data === 'string' ? data : data?.token;
+    if (!token) {
+      throw new Error('登录响应中缺少 token');
+    }
     return {
-      token: res.data.token || res.data,
-      userId: res.data.userId || '',
+      token,
+      userId: data?.user?.userId || data?.userId || '',
     };
   }
 

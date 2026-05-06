@@ -1,10 +1,10 @@
-/* Znote Sync Plugin Styles */
+/* SonicNote Sync Plugin Styles */
 
 /* Login modal */
-.znote-login-modal .setting-item {
+.sonicnote-login-modal .setting-item {
   padding: 8px 0;
 }
 
-.znote-login-modal .setting-item-control input {
+.sonicnote-login-modal .setting-item-control input {
   width: 200px;
 }

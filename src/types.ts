@@ -1,6 +1,6 @@
 // ===== 插件设置 =====
 
-export interface ZnotePluginSettings {
+export interface SonicNotePluginSettings {
   serverUrl: string;
   syncFolder: string;
   pageSize: number;
@@ -9,9 +9,9 @@ export interface ZnotePluginSettings {
   lastSyncTime: string;
 }
 
-export const DEFAULT_SETTINGS: ZnotePluginSettings = {
-  serverUrl: 'http://ainote.easylinkin.com:8048',
-  syncFolder: 'ZnoteSync',
+export const DEFAULT_SETTINGS: SonicNotePluginSettings = {
+  serverUrl: 'https://ainote.easylinkin.com:18048/prod-api',
+  syncFolder: 'SonicNoteSync',
   pageSize: 50,
   token: '',
   phoneNumber: '',

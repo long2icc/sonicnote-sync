@@ -50,7 +50,7 @@ export function generateFrontmatter(recording: Recording, syncTime: string): str
   }
 
   lines.push('tags:');
-  lines.push('  - znote');
+  lines.push('  - sonicnote');
 
   const recordTypeLabel = recording.recordType === '00' ? '通话' : '录音';
   lines.push(`  - ${recordTypeLabel}`);
