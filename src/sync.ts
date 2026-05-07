@@ -116,20 +116,20 @@ export class SyncService {
   private async processRecording(recording: Recording, localIndex: Map<string, LocalFileInfo>, settings: SonicNotePluginSettings): Promise<void> {
     const syncTime = new Date().toISOString();
 
-    // Check if we need to update
     const local = localIndex.get(recording.audioId);
-    if (local && local.syncTime && recording.updateTime) {
-      if (recording.updateTime <= local.syncTime) {
-        // No update needed
+
+    // Found existing file for this audioId — update it
+    if (local && local.path) {
+      // Skip if no update needed (has updateTime and it's older than syncTime)
+      if (local.syncTime && recording.updateTime && recording.updateTime <= local.syncTime) {
         return;
       }
 
-      // Check for conflict (user edited file locally after sync)
       const file = this.app.vault.getAbstractFileByPath(local.path);
       if (file instanceof TFile) {
+        // Check for conflict (user edited file locally after sync)
         const fileMtime = new Date(file.stat.mtime).toISOString();
-        if (fileMtime > local.syncTime) {
-          // Conflict — write to a new file instead
+        if (local.syncTime && fileMtime > local.syncTime) {
           await this.writeRecordingToNewFile(recording, syncTime, settings, local.path);
           return;
         }
@@ -172,11 +172,12 @@ export class SyncService {
   }
 
   private async buildRecordingContent(recording: Recording, syncTime: string): Promise<string> {
+    const settings = this.getSettings();
     const tasks: [string, Promise<TranscriptSegment[] | SummaryData | string | null>][] = [];
 
-    // Fetch transcript if available (status 2 = completed)
+    // Fetch transcript if enabled and available (status 2 = completed)
     let transcript: TranscriptSegment[] | null = null;
-    if (recording.transcriptStatus === 2) {
+    if (settings.includeTranscript && recording.transcriptStatus === 2) {
       tasks.push(['transcript', this.api.fetchTranscriptResult(recording.audioId).catch(() => null)]);
     }
 

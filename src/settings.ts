@@ -39,6 +39,17 @@ export class SonicNoteSettingTab extends PluginSettingTab {
           await this.saveSettings();
         }));
 
+    // Include transcript
+    new Setting(containerEl)
+      .setName('包含转录内容')
+      .setDesc('关闭后同步的文件中不包含逐字转录内容')
+      .addToggle(toggle => toggle
+        .setValue(settings.includeTranscript)
+        .onChange(async (value) => {
+          settings.includeTranscript = value;
+          await this.saveSettings();
+        }));
+
     // Login status & actions
     const loginSection = containerEl.createDiv();
     loginSection.createEl('h3', { text: '账号' });

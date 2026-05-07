@@ -11,10 +11,7 @@ export function sanitizeFileName(name: string): string {
 
 export function formatFileName(recording: Recording): string {
   const displayName = recording.recordNickName || recording.recordName || '未命名录音';
-  const date = recording.recordTime
-    ? recording.recordTime.substring(0, 10)
-    : new Date().toISOString().substring(0, 10);
-  return `${date}-${sanitizeFileName(displayName)}`;
+  return sanitizeFileName(displayName);
 }
 
 function formatDuration(seconds: string | number): string {
@@ -96,19 +93,19 @@ export function toMarkdown(
     parts.push('');
   }
 
+  // Summary section (before transcript)
+  if (summary && summary.summaryContent) {
+    parts.push('## AI 总结');
+    parts.push('');
+    parts.push(summary.summaryContent.trim());
+    parts.push('');
+  }
+
   // Transcript section
   if (transcript && transcript.length > 0) {
     parts.push('## 转录内容');
     parts.push('');
     parts.push(formatTranscript(transcript));
-    parts.push('');
-  }
-
-  // Summary section
-  if (summary && summary.summaryContent) {
-    parts.push('## AI 总结');
-    parts.push('');
-    parts.push(summary.summaryContent.trim());
     parts.push('');
   }
 

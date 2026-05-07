@@ -133,16 +133,28 @@
 <body>
 
 <header class="header">
-  <div class="version">v1.0.0</div>
+  <div class="version">v1.1.0</div>
   <h1>SonicNote Sync</h1>
   <p>将 SonicNote 妙记的录音、转录、总结同步到 Obsidian，以 Markdown 文件管理。</p>
-  <a class="download-btn" href="sonicnote-sync.zip" download>
+  <a class="download-btn" href="sonicnote-sync-v1.1.0.zip" download>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     下载插件
   </a>
 </header>
 
 <div class="container">
+
+  <div class="card">
+    <h2>更新记录</h2>
+    <h3>v1.1.0</h3>
+    <ul>
+      <li>修复录音进行中重复创建文件的问题</li>
+      <li>AI 总结移至转录内容之前，优先阅读</li>
+      <li>新增"包含转录内容"开关，可按需关闭</li>
+      <li>文件名去除日期前缀，直接使用录音原始名称</li>
+      <li>切换为 HTTPS 接口</li>
+    </ul>
+  </div>
 
   <div class="card">
     <h2>前置要求</h2>
@@ -155,7 +167,7 @@
   <div class="card">
     <h2>安装</h2>
     <ol>
-      <li>点击上方按钮下载 <span class="inline-code">sonicnote-sync.zip</span></li>
+      <li>点击上方按钮下载 <span class="inline-code">sonicnote-sync-v1.1.0.zip</span></li>
       <li>解压 zip 文件，得到以下文件：
         <ul style="margin-top:4px;">
           <li><span class="inline-code">main.js</span></li>
@@ -204,8 +216,8 @@
       <tbody>
         <tr><td>Frontmatter</td><td>录音元数据（ID、时间、时长、设备名、标签等）</td></tr>
         <tr><td>笔记</td><td>你在 App 中手写的笔记内容</td></tr>
-        <tr><td>转录内容</td><td>AI 转写文本（含说话人、时间戳）</td></tr>
         <tr><td>AI 总结</td><td>智能总结内容（要点、行动项等）</td></tr>
+        <tr><td>转录内容</td><td>AI 转写文本（含说话人、时间戳，可在设置中关闭）</td></tr>
       </tbody>
     </table>
   </div>
@@ -216,6 +228,7 @@
       <thead><tr><th>设置</th><th>默认值</th><th>说明</th></tr></thead>
       <tbody>
         <tr><td>同步文件夹</td><td><span class="inline-code">SonicNoteSync</span></td><td>Markdown 文件存放目录</td></tr>
+        <tr><td>包含转录内容</td><td>开启</td><td>关闭后同步文件中不包含逐字转录</td></tr>
       </tbody>
     </table>
   </div>

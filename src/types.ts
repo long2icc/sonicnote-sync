@@ -4,6 +4,7 @@ export interface SonicNotePluginSettings {
   serverUrl: string;
   syncFolder: string;
   pageSize: number;
+  includeTranscript: boolean;
   token: string;
   phoneNumber: string;
   lastSyncTime: string;
@@ -13,6 +14,7 @@ export const DEFAULT_SETTINGS: SonicNotePluginSettings = {
   serverUrl: 'https://ainote.easylinkin.com:18048/prod-api',
   syncFolder: 'SonicNoteSync',
   pageSize: 50,
+  includeTranscript: true,
   token: '',
   phoneNumber: '',
   lastSyncTime: '',
