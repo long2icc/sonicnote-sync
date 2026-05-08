@@ -1,7 +1,7 @@
 import { App, Notice, TFile, TFolder } from 'obsidian';
 import { SonicNoteApiClient } from './api';
 import { SonicNotePluginSettings, LocalFileInfo, Recording, SyncResult, TranscriptSegment, SummaryData } from './types';
-import { formatFileName, toMarkdown } from './formatter';
+import { formatFileName, sanitizeFileName, toMarkdown } from './formatter';
 
 export class SyncService {
   private api: SonicNoteApiClient;
@@ -118,57 +118,33 @@ export class SyncService {
 
     const local = localIndex.get(recording.audioId);
 
-    // Found existing file for this audioId — update it
+    // Already synced — check if file still has original name but server has a summarized title
     if (local && local.path) {
-      // Skip if no update needed (has updateTime and it's older than syncTime)
-      if (local.syncTime && recording.updateTime && recording.updateTime <= local.syncTime) {
-        return;
-      }
+      const hasNewTitle = recording.recordNickName && recording.recordNickName !== recording.recordName;
+      const localBaseName = local.path.split('/').pop()?.replace(/\.md$/, '') || '';
+      const originalName = sanitizeFileName(recording.recordName || '');
 
-      const file = this.app.vault.getAbstractFileByPath(local.path);
-      if (file instanceof TFile) {
-        // Check for conflict (user edited file locally after sync)
-        const fileMtime = new Date(file.stat.mtime).toISOString();
-        if (local.syncTime && fileMtime > local.syncTime) {
-          await this.writeRecordingToNewFile(recording, syncTime, settings, local.path);
-          return;
-        }
-
-        // Update existing file
+      if (hasNewTitle && localBaseName === originalName) {
+        // Overwrite content and rename to new title
         const content = await this.buildRecordingContent(recording, syncTime);
-        await this.app.vault.modify(file, content);
-        localIndex.set(recording.audioId, { path: local.path, syncTime });
-        return;
+        const newFileName = formatFileName(recording);
+        const newFilePath = `${settings.syncFolder}/${newFileName}.md`;
+        const oldFile = this.app.vault.getAbstractFileByPath(local.path);
+        if (oldFile instanceof TFile) {
+          await this.app.vault.modify(oldFile, content);
+          await this.app.vault.rename(oldFile, newFilePath);
+          localIndex.set(recording.audioId, { path: newFilePath, syncTime });
+        }
       }
+      return;
     }
 
     // New recording — create file
-    await this.writeRecordingToNewFile(recording, syncTime, settings);
-    localIndex.set(recording.audioId, {
-      path: `${settings.syncFolder}/${formatFileName(recording)}.md`,
-      syncTime,
-    });
-  }
-
-  private async writeRecordingToNewFile(recording: Recording, syncTime: string, settings: SonicNotePluginSettings, conflictWithPath?: string): Promise<void> {
     const content = await this.buildRecordingContent(recording, syncTime);
-    let fileName = formatFileName(recording);
-
-    if (conflictWithPath) {
-      // Create conflict copy
-      const timestamp = Date.now();
-      fileName = `${fileName}-conflict-${timestamp}`;
-    }
-
-    // Deduplicate filename
-    let filePath = `${settings.syncFolder}/${fileName}.md`;
-    let counter = 2;
-    while (await this.app.vault.adapter.exists(filePath)) {
-      filePath = `${settings.syncFolder}/${fileName}-${counter}.md`;
-      counter++;
-    }
-
+    const fileName = formatFileName(recording);
+    const filePath = `${settings.syncFolder}/${fileName}.md`;
     await this.app.vault.create(filePath, content);
+    localIndex.set(recording.audioId, { path: filePath, syncTime });
   }
 
   private async buildRecordingContent(recording: Recording, syncTime: string): Promise<string> {
