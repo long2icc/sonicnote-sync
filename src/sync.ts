@@ -71,7 +71,7 @@ export class SyncService {
     }
 
     // 5. Update last sync time
-    const now = new Date().toISOString();
+    const now = new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-');
     settings.lastSyncTime = now;
     await this.saveSettings();
 
@@ -114,7 +114,7 @@ export class SyncService {
   }
 
   private async processRecording(recording: Recording, localIndex: Map<string, LocalFileInfo>, settings: SonicNotePluginSettings): Promise<void> {
-    const syncTime = new Date().toISOString();
+    const syncTime = new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-');
 
     const local = localIndex.get(recording.audioId);
 

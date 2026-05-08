@@ -113,7 +113,7 @@ export default class SonicNoteSyncPlugin extends Plugin {
   private updateStatusBar() {
     if (this.api.isAuthenticated()) {
       const lastSync = this.settings.lastSyncTime
-        ? `上次同步: ${this.settings.lastSyncTime.substring(0, 16).replace('T', ' ')}`
+        ? `上次同步: ${this.settings.lastSyncTime}`
         : '未同步';
       this.statusBarEl.setText(`SonicNote: ${lastSync}`);
     } else {
