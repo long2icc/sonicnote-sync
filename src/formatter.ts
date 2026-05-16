@@ -1,4 +1,4 @@
-import { Recording, TranscriptSegment, SummaryData } from './types';
+import { Recording, TranscriptSegment, SummaryData, SonicNotePluginSettings } from './types';
 
 export function sanitizeFileName(name: string): string {
   return name
@@ -30,29 +30,49 @@ function formatTranscriptTime(ms: number): string {
   return formatDuration(totalSeconds);
 }
 
-export function generateFrontmatter(recording: Recording, syncTime: string): string {
-  const lines: string[] = [
-    '---',
-    `audio_id: "${recording.audioId}"`,
-    `record_name: "${recording.recordName || ''}"`,
-    `record_nick_name: "${(recording.recordNickName || '').replace(/"/g, '\\"')}"`,
-    `duration: "${recording.duration || '0'}"`,
-    `record_time: "${recording.recordTime || ''}"`,
-    `record_type: "${recording.recordType || ''}"`,
-    `device_name: "${recording.deviceName || ''}"`,
-  ];
+export function generateFrontmatter(recording: Recording, syncTime: string, settings: SonicNotePluginSettings): string {
+  const fields = settings.frontmatterFields;
+  const lines: string[] = ['---'];
 
-  if (recording.audioUrl) {
+  if (fields.audio_id !== false) {
+    lines.push(`audio_id: "${recording.audioId}"`);
+  }
+  if (fields.record_name !== false) {
+    lines.push(`record_name: "${recording.recordName || ''}"`);
+  }
+  if (fields.record_nick_name !== false) {
+    lines.push(`record_nick_name: "${(recording.recordNickName || '').replace(/"/g, '\\"')}"`);
+  }
+  if (fields.duration !== false) {
+    lines.push(`duration: "${recording.duration || '0'}"`);
+  }
+  if (fields.record_time !== false) {
+    lines.push(`record_time: "${recording.recordTime || ''}"`);
+  }
+  if (fields.record_type !== false) {
+    lines.push(`record_type: "${recording.recordType || ''}"`);
+  }
+  if (fields.device_name !== false) {
+    lines.push(`device_name: "${recording.deviceName || ''}"`);
+  }
+  if (fields.audio_url !== false && recording.audioUrl) {
     lines.push(`audio_url: "${recording.audioUrl}"`);
   }
+  if (fields.tags !== false) {
+    lines.push('tags:');
+    lines.push('  - sonicnote');
+    const recordTypeLabel = recording.recordType === '00' ? '通话' : '录音';
+    lines.push(`  - ${recordTypeLabel}`);
+  }
+  if (fields.sync_time !== false) {
+    lines.push(`sync_time: "${syncTime}"`);
+  }
 
-  lines.push('tags:');
-  lines.push('  - sonicnote');
+  // Custom frontmatter fields
+  for (const custom of settings.customFrontmatter) {
+    lines.push(`${custom.key}: "${custom.value.replace(/"/g, '\\"')}"`);
+  }
 
-  const recordTypeLabel = recording.recordType === '00' ? '通话' : '录音';
-  lines.push(`  - ${recordTypeLabel}`);
-
-  lines.push(`sync_time: "${syncTime}"`);
   lines.push('---');
   return lines.join('\n');
 }
@@ -72,12 +92,13 @@ export function toMarkdown(
   transcript: TranscriptSegment[] | null,
   summary: SummaryData | null,
   note: string,
-  syncTime: string
+  syncTime: string,
+  settings: SonicNotePluginSettings
 ): string {
   const parts: string[] = [];
 
   // Frontmatter
-  parts.push(generateFrontmatter(recording, syncTime));
+  parts.push(generateFrontmatter(recording, syncTime, settings));
   parts.push('');
 
   // Title

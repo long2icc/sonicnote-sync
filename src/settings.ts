@@ -1,6 +1,6 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { SonicNoteApiClient } from './api';
-import { SonicNotePluginSettings, DEFAULT_SETTINGS } from './types';
+import { SonicNotePluginSettings, DEFAULT_SETTINGS, BUILTIN_FRONTMATTER_FIELDS, CustomFrontmatterField } from './types';
 
 export class SonicNoteSettingTab extends PluginSettingTab {
   private api: SonicNoteApiClient;
@@ -48,6 +48,97 @@ export class SonicNoteSettingTab extends PluginSettingTab {
         .onChange(async (value) => {
           settings.includeTranscript = value;
           await this.saveSettings();
+        }));
+
+    // Frontmatter fields toggles
+    const fmSection = containerEl.createDiv();
+    fmSection.createEl('h3', { text: '文件属性' });
+    fmSection.createEl('p', { text: '选择同步到 Frontmatter 中的属性字段', cls: 'setting-item-description' });
+    fmSection.style.marginBottom = '12px';
+
+    const fmListEl = fmSection.createDiv();
+    const renderFrontmatterToggles = () => {
+      fmListEl.empty();
+      for (const [key, desc] of Object.entries(BUILTIN_FRONTMATTER_FIELDS)) {
+        const isRequired = key === 'audio_id' || key === 'sync_time';
+        if (isRequired) {
+          new Setting(fmListEl)
+            .setName(`${desc}`)
+            .setDesc(key)
+            .addText(text => {
+              text.setValue('必要属性').setDisabled(true);
+              text.inputEl.style.width = 'auto';
+              text.inputEl.style.color = 'var(--text-muted)';
+              text.inputEl.style.textAlign = 'center';
+              text.inputEl.style.border = 'none';
+              text.inputEl.style.background = 'var(--background-secondary)';
+              text.inputEl.style.borderRadius = '4px';
+              text.inputEl.style.padding = '2px 8px';
+              text.inputEl.style.fontSize = '0.8em';
+            });
+        } else {
+          new Setting(fmListEl)
+            .setName(`${desc}`)
+            .setDesc(key)
+            .addToggle(toggle => {
+              toggle.setValue(settings.frontmatterFields[key] !== false);
+              toggle.onChange(async (value) => {
+                settings.frontmatterFields[key] = value;
+                await this.saveSettings();
+              });
+            });
+        }
+      }
+    };
+    renderFrontmatterToggles();
+
+    // Custom frontmatter fields
+    const customSection = containerEl.createDiv();
+    customSection.createEl('h3', { text: '自定义属性' });
+    customSection.createEl('p', { text: '添加自定义属性到所有同步文件的 Frontmatter 中', cls: 'setting-item-description' });
+    customSection.style.marginBottom = '12px';
+
+    const customListEl = customSection.createDiv();
+    const renderCustomFields = () => {
+      customListEl.empty();
+
+      for (let i = 0; i < settings.customFrontmatter.length; i++) {
+        const field = settings.customFrontmatter[i];
+        new Setting(customListEl)
+          .addText(text => text
+            .setPlaceholder('属性名')
+            .setValue(field.key)
+            .onChange(async (value) => {
+              field.key = value;
+              await this.saveSettings();
+            }))
+          .addText(text => text
+            .setPlaceholder('属性值')
+            .setValue(field.value)
+            .onChange(async (value) => {
+              field.value = value;
+              await this.saveSettings();
+            }))
+          .addExtraButton(btn => btn
+            .setIcon('trash')
+            .setTooltip('删除')
+            .onClick(async () => {
+              settings.customFrontmatter.splice(i, 1);
+              await this.saveSettings();
+              renderCustomFields();
+            }));
+      }
+    };
+    renderCustomFields();
+
+    new Setting(customSection)
+      .setName('添加属性')
+      .addButton(btn => btn
+        .setButtonText('+ 添加')
+        .onClick(async () => {
+          settings.customFrontmatter.push({ key: '', value: '' });
+          await this.saveSettings();
+          renderCustomFields();
         }));
 
     // Login status & actions

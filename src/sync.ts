@@ -176,6 +176,6 @@ export class SyncService {
       if (name === 'note') note = (val as string) || '';
     });
 
-    return toMarkdown(recording, transcript, summary, note, syncTime);
+    return toMarkdown(recording, transcript, summary, note, syncTime, settings);
   }
 }
