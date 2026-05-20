@@ -1,4 +1,4 @@
-import { Recording, TranscriptSegment, SummaryData, SonicNotePluginSettings } from './types';
+import { Recording, TranscriptSegment, SummaryData, StudyReportData, SonicNotePluginSettings } from './types';
 
 export function sanitizeFileName(name: string): string {
   return name
@@ -91,6 +91,7 @@ export function toMarkdown(
   recording: Recording,
   transcript: TranscriptSegment[] | null,
   summary: SummaryData | null,
+  studyReport: StudyReportData | null,
   note: string,
   syncTime: string,
   settings: SonicNotePluginSettings
@@ -120,6 +121,28 @@ export function toMarkdown(
     parts.push('');
     parts.push(summary.summaryContent.trim());
     parts.push('');
+  }
+
+  // Study report section (before transcript)
+  if (studyReport && studyReport.status === 2) {
+    parts.push('## 学习总结');
+    parts.push('');
+    if (studyReport.knowledgePanorama) {
+      parts.push(`![知识全景图](${studyReport.knowledgePanorama})`);
+      parts.push('');
+    }
+    if (studyReport.coreGains) {
+      parts.push('### 核心收获');
+      parts.push('');
+      parts.push(studyReport.coreGains.trim());
+      parts.push('');
+    }
+    if (studyReport.consolidation) {
+      parts.push('### 课后巩固');
+      parts.push('');
+      parts.push(studyReport.consolidation.trim());
+      parts.push('');
+    }
   }
 
   // Transcript section

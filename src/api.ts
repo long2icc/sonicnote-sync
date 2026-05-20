@@ -1,5 +1,5 @@
 import { requestUrl, RequestUrlParam } from 'obsidian';
-import { BackendResponse, Recording, TranscriptSegment, SummaryData, SonicNotePluginSettings } from './types';
+import { BackendResponse, Recording, TranscriptSegment, SummaryData, StudyReportData, SonicNotePluginSettings } from './types';
 
 export class SonicNoteApiClient {
   constructor(private getSettings: () => SonicNotePluginSettings) {}
@@ -113,6 +113,14 @@ export class SonicNoteApiClient {
 
   async fetchSummary(audioId: string): Promise<SummaryData | null> {
     const res = await this.request('GET', `/share/${audioId}/summary`);
+    if (res.code !== 200) {
+      return null;
+    }
+    return res.data;
+  }
+
+  async fetchStudyReport(audioId: string): Promise<StudyReportData | null> {
+    const res = await this.request('GET', `/share/${audioId}/studyReport`);
     if (res.code !== 200) {
       return null;
     }

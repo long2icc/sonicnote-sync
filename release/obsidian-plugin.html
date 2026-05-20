@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SonicNote Sync — Obsidian 插件</title>
+<title>SonicNote for Obsidian — 插件 &amp; Skills</title>
 <style>
   :root {
     --bg: #f7f8fa;
@@ -16,6 +16,13 @@
     --code-bg: #1e1e2e;
     --code-text: #cdd6f4;
     --radius: 8px;
+    --tag-blue: #e8f4fd;
+    --tag-blue-text: #1a73e8;
+    --tag-green: #e6f4ea;
+    --tag-green-text: #137333;
+    --tag-purple: #f3e8fd;
+    --tag-purple-text: #7c3aed;
+    --divider: linear-gradient(90deg, transparent, var(--border), transparent);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -28,36 +35,79 @@
   .header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 36px 24px 28px;
+    padding: 40px 24px 32px;
     text-align: center;
   }
-  .header .version {
+  .header .badges { display: flex; justify-content: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .badge {
     display: inline-block;
-    background: var(--accent-light);
     padding: 2px 10px;
     border-radius: 4px;
     font-size: 0.78rem;
-    color: var(--text-secondary);
-    margin-bottom: 10px;
+    font-weight: 500;
   }
-  .header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 6px; }
-  .header p { font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 18px; }
+  .badge-version { background: var(--accent-light); color: var(--text-secondary); }
+  .badge-plugin { background: var(--tag-blue); color: var(--tag-blue-text); }
+  .badge-skill { background: var(--tag-purple); color: var(--tag-purple-text); }
+  .header h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 6px; }
+  .header p { font-size: 0.92rem; color: var(--text-secondary); max-width: 520px; margin: 0 auto 20px; }
+  .header-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .download-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     background: var(--accent);
     color: #fff;
-    padding: 9px 28px;
+    padding: 9px 22px;
     border-radius: 6px;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     font-weight: 500;
     text-decoration: none;
     transition: opacity 0.15s;
+    white-space: nowrap;
   }
   .download-btn:hover { opacity: 0.82; }
-  .download-btn svg { width: 16px; height: 16px; }
+  .download-btn svg { width: 15px; height: 15px; }
+  .download-btn.outline {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+  .download-btn.outline:hover { background: var(--accent-light); }
+  .platform-note {
+    display: inline-block;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    font-weight: 400;
+  }
   .container { max-width: 700px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  /* Nav */
+  .nav {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .nav a {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--text-secondary);
+    transition: background 0.15s, color 0.15s;
+    border-right: 1px solid var(--border);
+  }
+  .nav a:last-child { border-right: none; }
+  .nav a:hover { background: var(--accent-light); color: var(--text); }
+
+  /* Cards */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -70,15 +120,49 @@
     margin-bottom: 14px;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .card h3 { font-size: 0.92rem; margin: 16px 0 6px; font-weight: 600; }
+  .card h2 .icon { font-size: 1.1rem; }
+  .card h3 { font-size: 0.95rem; margin: 18px 0 6px; font-weight: 600; }
+  .card h4 { font-size: 0.9rem; margin: 12px 0 4px; font-weight: 600; color: var(--text); }
   .card p, .card li { color: var(--text-secondary); font-size: 0.9rem; }
   .card ol, .card ul { padding-left: 18px; margin: 4px 0; }
-  .card li { margin-bottom: 2px; }
-  .code-wrap {
-    position: relative;
-    margin: 8px 0;
+  .card li { margin-bottom: 3px; }
+
+  /* Section divider */
+  .section-divider {
+    height: 1px;
+    background: var(--divider);
+    margin: 28px 0;
   }
+
+  /* Skill hero */
+  .skill-hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 26px 20px;
+    margin-bottom: 14px;
+    border-left: 4px solid var(--tag-purple);
+  }
+  .skill-hero .skill-tag {
+    display: inline-block;
+    background: var(--tag-purple);
+    color: var(--tag-purple-text);
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .skill-hero h2 { font-size: 1.15rem; margin-bottom: 6px; border: none; padding: 0; }
+  .skill-hero p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 14px; }
+  .skill-hero .skill-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* Code */
+  .code-wrap { position: relative; margin: 8px 0; }
   .code-wrap pre {
     background: var(--code-bg);
     color: var(--code-text);
@@ -91,8 +175,7 @@
   }
   .copy-btn {
     position: absolute;
-    top: 6px;
-    right: 6px;
+    top: 6px; right: 6px;
     background: rgba(255,255,255,0.1);
     border: none;
     border-radius: 4px;
@@ -114,35 +197,145 @@
     font-size: 0.85em;
     color: var(--text);
   }
+
+  /* Tables */
   table { width: 100%; border-collapse: collapse; margin: 8px 0; }
   th { text-align: left; padding: 7px 12px; background: var(--accent-light); font-weight: 600; font-size: 0.85rem; }
   td { padding: 7px 12px; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+
+  /* Feature grid */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  .feature-item {
+    background: var(--accent-light);
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .feature-item .fi-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 2px; }
+  .feature-item .fi-desc { font-size: 0.82rem; color: var(--text-secondary); }
+
+  /* Style chips */
+  .style-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .style-chip {
+    display: inline-block;
+    background: var(--accent-light);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: var(--text);
+  }
+
+  /* Classification table */
+  .cls-table td:first-child { font-weight: 500; white-space: nowrap; }
+
   footer {
     text-align: center;
     padding: 20px;
     color: var(--text-secondary);
     font-size: 0.8rem;
   }
+
+  /* Back to top */
+  .back-to-top {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 40px;
+    height: 40px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s, visibility 0.25s, transform 0.25s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 100;
+  }
+  .back-to-top.visible { opacity: 1; visibility: visible; }
+  .back-to-top:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .back-to-top svg { width: 20px; height: 20px; }
+
   @media (max-width: 640px) {
     .header { padding: 28px 16px 22px; }
     .header h1 { font-size: 1.35rem; }
     .card { padding: 18px 16px; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .nav a { font-size: 0.8rem; padding: 8px 6px; }
   }
 </style>
 </head>
 <body>
 
 <header class="header">
-  <div class="version">v1.1.4</div>
-  <h1>SonicNote Sync</h1>
-  <p>将 SonicNote 妙记的录音、转录、总结同步到 Obsidian，以 Markdown 文件管理。</p>
-  <a class="download-btn" href="sonicnote-sync-v1.1.4.zip" download>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    下载插件
-  </a>
+  <div class="badges">
+    <span class="badge badge-version">v1.1.4</span>
+    <span class="badge badge-plugin">Obsidian 插件</span>
+    <span class="badge badge-skill">2 个 Skills</span>
+  </div>
+  <h1>SonicNote for Obsidian</h1>
+  <p>录音同步、待办提取、工作总结 — 让 Obsidian 成为你的智能笔记中心</p>
+  <div class="header-actions">
+    <a class="download-btn" href="sonicnote-sync-v1.1.4.zip" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      SonicNote Sync 插件
+    </a>
+    <a class="download-btn outline" href="md-todo-extractor.zip" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      MD 待办提取器
+    </a>
+    <a class="download-btn outline" href="work-summary.zip" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      工作总结生成器
+    </a>
+  </div>
 </header>
 
 <div class="container">
+
+  <!-- Quick Nav -->
+  <nav class="nav">
+    <a href="#plugin">SonicNote Sync 插件</a>
+    <a href="#skill-todo">MD 待办提取器</a>
+    <a href="#skill-summary">工作总结生成器</a>
+  </nav>
+
+  <!-- ============================================================ -->
+  <!-- SECTION: Obsidian Plugin -->
+  <!-- ============================================================ -->
+  <div id="plugin"></div>
+
+  <div class="card">
+    <h2><span class="icon">🔌</span> SonicNote Sync 插件</h2>
+    <p>将 SonicNote 妙记的录音、转录、AI 总结同步到 Obsidian，以 Markdown 文件管理。每条录音对应一个文件，包含完整的元数据和内容。</p>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="fi-title">录音同步</div>
+        <div class="fi-desc">一键拉取全部录音，自动生成 Markdown</div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-title">AI 转录</div>
+        <div class="fi-desc">含说话人识别和时间戳的逐字转录</div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-title">智能总结</div>
+        <div class="fi-desc">AI 自动生成的要点和行动项</div>
+      </div>
+      <div class="feature-item">
+        <div class="fi-title">自定义属性</div>
+        <div class="fi-desc">灵活配置 Frontmatter 字段</div>
+      </div>
+    </div>
+  </div>
 
   <div class="card">
     <h2>更新记录</h2>
@@ -158,14 +351,13 @@
     <h3>v1.1.2</h3>
     <ul>
       <li>已同步的录音不会被覆盖更新，删除文件后重新同步即可获取最新内容</li>
-      <li>唯一例外：录音尚未生成总结时文件名为原始名称（如 Note-xxx.mp3），生成总结标题后再次同步会自动覆盖并重命名为总结标题</li>
+      <li>唯一例外：录音尚未生成总结时文件名为原始名称，生成总结标题后再次同步会自动覆盖并重命名</li>
     </ul>
     <h3>v1.1.0</h3>
     <ul>
       <li>修复录音进行中重复创建文件的问题</li>
       <li>AI 总结移至转录内容之前，优先阅读</li>
       <li>新增"包含转录内容"开关，可按需关闭</li>
-      <li>文件名去除日期前缀，直接使用录音原始名称</li>
       <li>切换为 HTTPS 接口</li>
     </ul>
   </div>
@@ -210,7 +402,7 @@
     <ol>
       <li>进入 <strong>设置 → SonicNote Sync</strong></li>
       <li>点击"登录"按钮</li>
-      <li>输入 SonicNote 妙记的手机号和密码（使用 APP 验证码或者申领长期密码）</li>
+      <li>输入 SonicNote 妙记的手机号和密码（使用 APP 验证码或申领长期密码）</li>
     </ol>
 
     <h3>同步录音</h3>
@@ -243,6 +435,8 @@
       <tbody>
         <tr><td>同步文件夹</td><td><span class="inline-code">SonicNoteSync</span></td><td>Markdown 文件存放目录</td></tr>
         <tr><td>包含转录内容</td><td>开启</td><td>关闭后同步文件中不包含逐字转录</td></tr>
+        <tr><td>文件属性</td><td>全部开启</td><td>按需开关 Frontmatter 中的内置属性字段</td></tr>
+        <tr><td>自定义属性</td><td>无</td><td>添加自定义键值对到所有同步文件</td></tr>
       </tbody>
     </table>
   </div>
@@ -255,9 +449,191 @@
     </ol>
   </div>
 
+  <!-- ============================================================ -->
+  <!-- DIVIDER -->
+  <!-- ============================================================ -->
+  <div class="section-divider"></div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION: Skill — MD 待办提取器 -->
+  <!-- ============================================================ -->
+  <div id="skill-todo"></div>
+
+  <div class="skill-hero">
+    <span class="skill-tag">Skill</span>
+    <span class="badge" style="background: var(--tag-blue); color: var(--tag-blue-text); margin-left:4px; vertical-align:middle;">仅 macOS</span>
+    <h2>MD 待办提取器</h2>
+    <p>从 Markdown 文件中智能提取待办事项，自动分类添加到 macOS 日历、提醒事项或备忘录。</p>
+  </div>
+
+  <div class="card">
+    <h2>智能分类规则</h2>
+    <p>AI 自动判断每条待办的重要性和时间属性，分类到最合适的系统应用：</p>
+    <table class="cls-table">
+      <thead><tr><th>分类</th><th>判断标准</th><th>目标应用</th></tr></thead>
+      <tbody>
+        <tr><td>📅 日历</td><td>同半天内（≤4小时）有明确开始和结束时间的会议/讨论</td><td>Calendar</td></tr>
+        <tr><td>⏰ 提醒事项</td><td>跨度超半天，或只有截止时间无明确开始时间</td><td>Reminders</td></tr>
+        <tr><td>📝 备忘录</td><td>无明确时间但很重要</td><td>Notes</td></tr>
+        <tr><td>⏭️ 跳过</td><td>既无时间也不重要</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>安装</h2>
+    <ol>
+      <li>点击页面顶部按钮下载 <span class="inline-code">md-todo-extractor.zip</span></li>
+      <li>解压得到 <span class="inline-code">SKILL.md</span> 文件</li>
+      <li>将其复制到你所用 AI 工具的 Skills 目录，例如：</li>
+    </ol>
+    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code># Claude Code
+~/.claude/skills/md-todo-extractor/SKILL.md
+
+# 其他支持 Skill 的工具请参照其文档</code></pre></div>
+    <ol start="4">
+      <li>重启 AI 工具会话，Skill 自动加载</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>使用方法</h2>
+    <h3>基本用法</h3>
+    <p>在支持 Skill 的 AI 工具中，告诉 AI 你要分析的文件或文件夹：</p>
+    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code>帮我分析 ~/Documents/projects 下的待办事项</code></pre></div>
+
+    <h3>指定时间范围</h3>
+    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code>从 md 文件提取上周的待办，加入日历</code></pre></div>
+
+    <h3>工作流程</h3>
+    <ol>
+      <li>提供 md 文件路径或文件夹路径（可选指定时间范围）</li>
+      <li>AI 扫描文件，识别潜在待办事项</li>
+      <li>显示分类结果表格，等待你确认</li>
+      <li>选择目标日历/提醒列表/备忘录文件夹</li>
+      <li>通过 AppleScript 自动添加到 macOS 系统应用</li>
+    </ol>
+
+    <h3>系统要求</h3>
+    <ul>
+      <li><strong>仅支持 macOS</strong>（依赖 AppleScript 操作日历、提醒事项、备忘录）</li>
+      <li>首次使用需在 <strong>系统偏好设置 → 隐私与安全性</strong> 中授予日历、提醒事项、备忘录权限</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- DIVIDER -->
+  <!-- ============================================================ -->
+  <div class="section-divider"></div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION: Skill — 工作总结生成器 -->
+  <!-- ============================================================ -->
+  <div id="skill-summary"></div>
+
+  <div class="skill-hero" style="border-left-color: var(--tag-green);">
+    <span class="skill-tag" style="background: var(--tag-green); color: var(--tag-green-text);">Skill</span>
+    <h2>工作总结生成器</h2>
+    <p>从日记、会议记录、碎片笔记中生成多风格深度工作总结。核心理念：不要复述做了什么，要说出发现了什么。</p>
+  </div>
+
+  <div class="card">
+    <h2>13 种总结风格</h2>
+    <p>根据日记内容智能推荐最佳风格，也可自选多种风格一次生成：</p>
+    <div class="style-chips">
+      <span class="style-chip">1. 模式发现型</span>
+      <span class="style-chip">2. 成果导向型</span>
+      <span class="style-chip">3. 风险预警型</span>
+      <span class="style-chip">4. 学习成长型</span>
+      <span class="style-chip">5. 叙事故事型</span>
+      <span class="style-chip">6. 极简清单型</span>
+      <span class="style-chip">7. OKR 对齐型</span>
+      <span class="style-chip">8. 时间审计型</span>
+      <span class="style-chip">9. 关系网络型</span>
+      <span class="style-chip">10. 决策复盘型</span>
+      <span class="style-chip">11. 情绪日志型</span>
+      <span class="style-chip">12. 跨界联想型</span>
+      <span class="style-chip">13. 古龙简洁型</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>风格说明</h2>
+    <table>
+      <thead><tr><th style="width:130px">风格</th><th>核心定位</th><th>适用场景</th></tr></thead>
+      <tbody>
+        <tr><td>模式发现型</td><td>找规律、重复问题、趋势变化</td><td>日常复盘、深度思考</td></tr>
+        <tr><td>成果导向型</td><td>聚焦完成的事，结构清晰</td><td>向上汇报、团队同步、周报</td></tr>
+        <tr><td>风险预警型</td><td>识别潜在问题、依赖风险</td><td>项目管理、多项目并行</td></tr>
+        <tr><td>学习成长型</td><td>提炼认知升级、方法论</td><td>个人成长、知识沉淀</td></tr>
+        <tr><td>叙事故事型</td><td>起承转合的故事叙事</td><td>分享交流、团队文化</td></tr>
+        <tr><td>极简清单型</td><td>核心要点 + 下一步行动</td><td>快速回顾、内容繁多</td></tr>
+        <tr><td>OKR 对齐型</td><td>工作与目标对齐，评估进展</td><td>目标管理、季度复盘</td></tr>
+        <tr><td>时间审计型</td><td>分析时间分配和 ROI</td><td>效率提升、时间管理</td></tr>
+        <tr><td>关系网络型</td><td>梳理人际互动和变化</td><td>人脉管理、客户关系</td></tr>
+        <tr><td>决策复盘型</td><td>回顾决策依据和对错</td><td>决策质量提升</td></tr>
+        <tr><td>情绪日志型</td><td>记录情绪起伏和触发因素</td><td>情绪管理、自我觉察</td></tr>
+        <tr><td>跨界联想型</td><td>跨领域类比，产生灵感</td><td>创新思考、打破定式</td></tr>
+        <tr><td>古龙简洁型</td><td>50 字内升华工作意义</td><td>快速回顾、积极心态</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>安装</h2>
+    <ol>
+      <li>点击页面顶部按钮下载 <span class="inline-code">work-summary.zip</span></li>
+      <li>解压得到 <span class="inline-code">SKILL.md</span> 和 <span class="inline-code">references/styles.md</span></li>
+      <li>保持目录结构复制到你所用 AI 工具的 Skills 目录，例如：</li>
+    </ol>
+    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code># Claude Code
+~/.claude/skills/work-summary/
+├── SKILL.md
+└── references/
+    └── styles.md
+
+# 其他支持 Skill 的工具请参照其文档</code></pre></div>
+    <ol start="4">
+      <li>重启 AI 工具会话，Skill 自动加载</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>使用方法</h2>
+    <h3>基本用法</h3>
+    <p>在支持 Skill 的 AI 工具中，告诉 AI 你想总结哪段时间：</p>
+    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code>帮我总结今天的工作</code></pre></div>
+
+    <h3>指定时间范围</h3>
+    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code>总结本周的工作，风格选1和13</code></pre></div>
+
+    <h3>工作流程</h3>
+    <ol>
+      <li><strong>获取素材</strong> — 确认时间范围，自动查找日记文件</li>
+      <li><strong>选择风格</strong> — 展示全部 13 种风格，智能推荐 + 自选</li>
+      <li><strong>生成总结</strong> — 按选定风格的 prompt 模板深度生成</li>
+      <li><strong>输出方式</strong> — 对话展示 / 追加到日记 / 生成独立文件</li>
+    </ol>
+
+    <h3>Obsidian 集成</h3>
+    <p>如果 Obsidian 正在运行且支持 CLI，Skill 会优先通过 CLI 操作文件（读取、追加、创建、搜索），无需手动指定完整路径。</p>
+    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code># 读取日记
+obsidian read path="日记文件夹/日记2026-05-12.md"
+
+# 追加总结到文件
+obsidian append path="日记文件夹/日记2026-05-12.md" content="..."
+
+# 创建独立总结文件
+obsidian create path="日记文件夹/总结2026-05-12.md" content="..."</code></pre></div>
+  </div>
+
 </div>
 
-<footer>SonicNote Sync &copy; 2026</footer>
+<footer>SonicNote for Obsidian &copy; 2026</footer>
+
+<button class="back-to-top" id="backToTop" title="返回顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
 
 <script>
 document.querySelectorAll('.copy-btn').forEach(btn => {
@@ -272,6 +648,15 @@ document.querySelectorAll('.copy-btn').forEach(btn => {
       }, 1500);
     });
   });
+});
+
+// Back to top
+const backToTop = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  backToTop.classList.toggle('visible', window.scrollY > 400);
+});
+backToTop.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 </script>
 

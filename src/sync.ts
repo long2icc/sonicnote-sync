@@ -1,6 +1,6 @@
 import { App, Notice, TFile, TFolder } from 'obsidian';
 import { SonicNoteApiClient } from './api';
-import { SonicNotePluginSettings, LocalFileInfo, Recording, SyncResult, TranscriptSegment, SummaryData } from './types';
+import { SonicNotePluginSettings, LocalFileInfo, Recording, SyncResult, TranscriptSegment, SummaryData, StudyReportData } from './types';
 import { formatFileName, sanitizeFileName, toMarkdown } from './formatter';
 
 export class SyncService {
@@ -149,7 +149,7 @@ export class SyncService {
 
   private async buildRecordingContent(recording: Recording, syncTime: string): Promise<string> {
     const settings = this.getSettings();
-    const tasks: [string, Promise<TranscriptSegment[] | SummaryData | string | null>][] = [];
+    const tasks: [string, Promise<TranscriptSegment[] | SummaryData | StudyReportData | string | null>][] = [];
 
     // Fetch transcript if enabled and available (status 2 = completed)
     let transcript: TranscriptSegment[] | null = null;
@@ -163,6 +163,10 @@ export class SyncService {
       tasks.push(['summary', this.api.fetchSummary(recording.audioId).catch(() => null)]);
     }
 
+    // Fetch study report
+    let studyReport: StudyReportData | null = null;
+    tasks.push(['studyReport', this.api.fetchStudyReport(recording.audioId).catch(() => null)]);
+
     // Fetch note
     let note = '';
     tasks.push(['note', this.api.fetchNote(recording.audioId).catch(() => '')]);
@@ -173,9 +177,10 @@ export class SyncService {
       const val = results[i];
       if (name === 'transcript') transcript = val as TranscriptSegment[] | null;
       if (name === 'summary') summary = val as SummaryData | null;
+      if (name === 'studyReport') studyReport = val as StudyReportData | null;
       if (name === 'note') note = (val as string) || '';
     });
 
-    return toMarkdown(recording, transcript, summary, note, syncTime, settings);
+    return toMarkdown(recording, transcript, summary, studyReport, note, syncTime, settings);
   }
 }

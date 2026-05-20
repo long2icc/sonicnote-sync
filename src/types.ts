@@ -96,6 +96,15 @@ export interface SummaryData {
   status: number;
 }
 
+export interface StudyReportData {
+  id: number;
+  audioId: string;
+  knowledgePanorama: string;
+  coreGains: string;
+  consolidation: string;
+  status: number;
+}
+
 // ===== 同步相关 =====
 
 export interface LocalFileInfo {
