@@ -9,6 +9,8 @@ export default class SonicNoteSyncPlugin extends Plugin {
   private api!: SonicNoteApiClient;
   private syncService!: SyncService;
   private statusBarEl!: HTMLElement;
+  private syncTimer: number | null = null;
+  private syncing = false;
 
   async onload() {
     await this.loadSettings();
@@ -71,9 +73,18 @@ export default class SonicNoteSyncPlugin extends Plugin {
     ));
 
     console.log('SonicNote Sync plugin loaded');
+
+    // Auto sync on open
+    if (this.settings.autoSyncOnOpen && this.api.isAuthenticated()) {
+      setTimeout(() => this.triggerSync(), 5000);
+    }
+
+    // Periodic resync
+    this.startAutoSync();
   }
 
   onunload() {
+    this.stopAutoSync();
     console.log('SonicNote Sync plugin unloaded');
   }
 
@@ -91,6 +102,10 @@ export default class SonicNoteSyncPlugin extends Plugin {
       return;
     }
 
+    if (this.syncing) return;
+    this.syncing = true;
+    this.stopAutoSync();
+
     this.statusBarEl.setText('SonicNote: 同步中...');
 
     try {
@@ -107,6 +122,9 @@ export default class SonicNoteSyncPlugin extends Plugin {
     } catch (e) {
       new Notice(`同步失败: ${e instanceof Error ? e.message : '未知错误'}`);
       this.updateStatusBar();
+    } finally {
+      this.syncing = false;
+      this.startAutoSync();
     }
   }
 
@@ -118,6 +136,23 @@ export default class SonicNoteSyncPlugin extends Plugin {
       this.statusBarEl.setText(`SonicNote: ${lastSync}`);
     } else {
       this.statusBarEl.setText('SonicNote: 未登录');
+    }
+  }
+
+  startAutoSync() {
+    this.stopAutoSync();
+    const minutes = this.settings.resyncIntervalMinutes;
+    if (minutes > 0 && this.api.isAuthenticated()) {
+      this.syncTimer = window.setInterval(() => {
+        this.triggerSync();
+      }, minutes * 60 * 1000);
+    }
+  }
+
+  stopAutoSync() {
+    if (this.syncTimer !== null) {
+      window.clearInterval(this.syncTimer);
+      this.syncTimer = null;
     }
   }
 }

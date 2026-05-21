@@ -50,6 +50,37 @@ export class SonicNoteSettingTab extends PluginSettingTab {
           await this.saveSettings();
         }));
 
+    // Auto sync on open
+    new Setting(containerEl)
+      .setName('启动时自动同步')
+      .setDesc('每次打开 Obsidian 时自动执行一次同步')
+      .addToggle(toggle => toggle
+        .setValue(settings.autoSyncOnOpen)
+        .onChange(async (value) => {
+          settings.autoSyncOnOpen = value;
+          await this.saveSettings();
+        }));
+
+    // Resync interval
+    new Setting(containerEl)
+      .setName('定时重同步')
+      .setDesc('Obsidian 打开期间按指定间隔自动重新同步')
+      .addDropdown(dropdown => dropdown
+        .addOptions({
+          '0': '关闭（手动同步）',
+          '60': '每 1 小时',
+          '180': '每 3 小时',
+          '360': '每 6 小时',
+          '1440': '每 24 小时',
+        })
+        .setValue(String(settings.resyncIntervalMinutes))
+        .onChange(async (value) => {
+          settings.resyncIntervalMinutes = parseInt(value, 10);
+          await this.saveSettings();
+          const plugin = (this as any).plugin;
+          if (plugin?.startAutoSync) plugin.startAutoSync();
+        }));
+
     // Frontmatter fields toggles
     const fmSection = containerEl.createDiv();
     fmSection.createEl('h3', { text: '文件属性' });

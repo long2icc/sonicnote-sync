@@ -10,6 +10,8 @@ export interface SonicNotePluginSettings {
   syncFolder: string;
   pageSize: number;
   includeTranscript: boolean;
+  autoSyncOnOpen: boolean;
+  resyncIntervalMinutes: number;
   frontmatterFields: Record<string, boolean>;
   customFrontmatter: CustomFrontmatterField[];
   token: string;
@@ -35,6 +37,8 @@ export const DEFAULT_SETTINGS: SonicNotePluginSettings = {
   syncFolder: 'SonicNoteSync',
   pageSize: 50,
   includeTranscript: true,
+  autoSyncOnOpen: false,
+  resyncIntervalMinutes: 0,
   frontmatterFields: {
     audio_id: true,
     record_name: true,
