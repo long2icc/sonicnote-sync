@@ -74,13 +74,6 @@
     border: 1px solid var(--border);
   }
   .download-btn.outline:hover { background: var(--accent-light); }
-  .platform-note {
-    display: inline-block;
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-    margin-top: 2px;
-    font-weight: 400;
-  }
   .container { max-width: 700px; margin: 0 auto; padding: 24px 20px 60px; }
 
   /* Nav */
@@ -138,6 +131,57 @@
     margin: 28px 0;
   }
 
+  /* Section banner */
+  .section-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 24px;
+    margin: 32px 0 16px;
+    border-radius: var(--radius);
+    position: relative;
+    scroll-margin-top: 16px;
+  }
+  .section-banner.plugin-banner {
+    background: linear-gradient(135deg, #e8f4fd 0%, #f0f6ff 100%);
+    border: 1px solid #d0e8f7;
+  }
+  .section-banner.skills-banner {
+    background: linear-gradient(135deg, #f3e8fd 0%, #f8f0ff 100%);
+    border: 1px solid #e0d0f7;
+  }
+  .section-banner.resources-banner {
+    background: linear-gradient(135deg, #e6f4ea 0%, #effaf1 100%);
+    border: 1px solid #c8e6ce;
+  }
+  .section-banner .banner-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .plugin-banner .banner-icon { background: #fff; box-shadow: 0 1px 4px rgba(26,115,232,0.15); }
+  .skills-banner .banner-icon { background: #fff; box-shadow: 0 1px 4px rgba(124,58,237,0.15); }
+  .resources-banner .banner-icon { background: #fff; box-shadow: 0 1px 4px rgba(19,115,51,0.15); }
+  .section-banner .banner-text h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .section-banner .banner-text p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin: 2px 0 0;
+  }
+
   /* Skill hero */
   .skill-hero {
     background: var(--surface);
@@ -159,7 +203,6 @@
   }
   .skill-hero h2 { font-size: 1.15rem; margin-bottom: 6px; border: none; padding: 0; }
   .skill-hero p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 14px; }
-  .skill-hero .skill-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
   /* Code */
   .code-wrap { position: relative; margin: 8px 0; }
@@ -232,6 +275,29 @@
   /* Classification table */
   .cls-table td:first-child { font-weight: 500; white-space: nowrap; }
 
+  /* Callout */
+  .callout {
+    background: var(--tag-blue);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 14px 0;
+  }
+  .callout p { color: var(--tag-blue-text); font-size: 0.88rem; }
+  .callout a { color: var(--tag-blue-text); font-weight: 600; }
+
+  /* Resource card */
+  .resource-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--tag-green);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-bottom: 14px;
+  }
+  .resource-card h3 { font-size: 0.95rem; margin-bottom: 6px; }
+  .resource-card p { color: var(--text-secondary); font-size: 0.88rem; }
+  .resource-card a { font-weight: 500; }
+
   footer {
     text-align: center;
     padding: 20px;
@@ -280,6 +346,7 @@
     <span class="badge badge-version">v1.1.5</span>
     <span class="badge badge-plugin">Obsidian 插件</span>
     <span class="badge badge-skill">2 个 Skills</span>
+    <span class="badge" style="background: var(--tag-green); color: var(--tag-green-text);">视频教程</span>
   </div>
   <h1>SonicNote for Obsidian</h1>
   <p>录音同步、待办提取、工作总结 — 让 Obsidian 成为你的智能笔记中心</p>
@@ -288,13 +355,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       SonicNote Sync 插件
     </a>
-    <a class="download-btn outline" href="md-todo-extractor.zip" download>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      MD 待办提取器
-    </a>
-    <a class="download-btn outline" href="work-summary.zip" download>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      工作总结生成器
+    <a class="download-btn" href="https://pan.baidu.com/s/1PeRNFGdmnBrW4296XT5UZQ?pwd=cdtp" target="_blank" style="background: linear-gradient(135deg, #e53935, #ff6f00);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Shiki 粉丝专属福利
     </a>
   </div>
 </header>
@@ -304,17 +367,22 @@
   <!-- Quick Nav -->
   <nav class="nav">
     <a href="#plugin">SonicNote Sync 插件</a>
-    <a href="#skill-todo">MD 待办提取器</a>
-    <a href="#skill-summary">工作总结生成器</a>
+    <a href="#skills">AI Skills</a>
+    <a href="#resources">视频教程</a>
   </nav>
 
   <!-- ============================================================ -->
   <!-- SECTION: Obsidian Plugin -->
   <!-- ============================================================ -->
-  <div id="plugin"></div>
+  <div id="plugin" class="section-banner plugin-banner">
+    <div class="banner-icon">🔌</div>
+    <div class="banner-text">
+      <h2>SonicNote Sync 插件</h2>
+      <p>将录音、转录、AI 总结同步到 Obsidian</p>
+    </div>
+  </div>
 
   <div class="card">
-    <h2><span class="icon">🔌</span> SonicNote Sync 插件</h2>
     <p>将 SonicNote 妙记的录音、转录、AI 总结同步到 Obsidian，以 Markdown 文件管理。每条录音对应一个文件，包含完整的元数据和内容。</p>
 
     <div class="feature-grid">
@@ -331,8 +399,8 @@
         <div class="fi-desc">AI 自动生成的要点和行动项</div>
       </div>
       <div class="feature-item">
-        <div class="fi-title">自定义属性</div>
-        <div class="fi-desc">灵活配置 Frontmatter 字段</div>
+        <div class="fi-title">自动同步</div>
+        <div class="fi-desc">启动时自动同步 + 定时重同步</div>
       </div>
     </div>
   </div>
@@ -429,6 +497,7 @@
         <tr><td>Frontmatter</td><td>录音元数据（ID、时间、时长、设备名、标签等）</td></tr>
         <tr><td>笔记</td><td>你在 App 中手写的笔记内容</td></tr>
         <tr><td>AI 总结</td><td>智能总结内容（要点、行动项等）</td></tr>
+        <tr><td>学习总结</td><td>知识全景图、核心收获、课后巩固（如有）</td></tr>
         <tr><td>转录内容</td><td>AI 转写文本（含说话人、时间戳，可在设置中关闭）</td></tr>
       </tbody>
     </table>
@@ -441,6 +510,8 @@
       <tbody>
         <tr><td>同步文件夹</td><td><span class="inline-code">SonicNoteSync</span></td><td>Markdown 文件存放目录</td></tr>
         <tr><td>包含转录内容</td><td>开启</td><td>关闭后同步文件中不包含逐字转录</td></tr>
+        <tr><td>启动时自动同步</td><td>关闭</td><td>打开 Obsidian 时自动执行一次同步</td></tr>
+        <tr><td>定时重同步</td><td>关闭</td><td>1/3/6/24 小时间隔自动重新同步</td></tr>
         <tr><td>文件属性</td><td>全部开启</td><td>按需开关 Frontmatter 中的内置属性字段</td></tr>
         <tr><td>自定义属性</td><td>无</td><td>添加自定义键值对到所有同步文件</td></tr>
       </tbody>
@@ -461,15 +532,44 @@
   <div class="section-divider"></div>
 
   <!-- ============================================================ -->
-  <!-- SECTION: Skill — MD 待办提取器 -->
+  <!-- SECTION: Skills (合并) -->
   <!-- ============================================================ -->
-  <div id="skill-todo"></div>
+  <div id="skills" class="section-banner skills-banner">
+    <div class="banner-icon">✨</div>
+    <div class="banner-text">
+      <h2>AI Skills</h2>
+      <p>从 Markdown 笔记中提取待办、生成工作总结</p>
+    </div>
+  </div>
 
+  <!-- Skill 安装说明 -->
+  <div class="callout">
+    <p><strong>如何使用 Skill 安装提示词？</strong></p>
+    <p style="margin-top:6px;">下面的文档不是直接使用的 Skill，而是"安装 Skill 的提示词"。需要把内容复制到支持本地 Skill / Agent 工作流的工具里使用，例如：</p>
+    <p style="margin-top:4px;">Codex · Claude Code · Claude 桌面版 · WorkBuddy · OpenClaw · OpenCode · Hermes Agent</p>
+    <p style="margin-top:8px;"><strong>使用方法：</strong></p>
+    <ol style="padding-left:18px; margin-top:4px; color: var(--tag-blue-text); font-size: 0.86rem;">
+      <li>打开支持创建本地 Skill 或 Agent 工作流的工具</li>
+      <li>新建一个对话或任务</li>
+      <li>打开提示词文档，全选复制全部内容</li>
+      <li>粘贴到工具的对话框里发送</li>
+      <li>按照工具提出的问题，填写你的个人配置（文件夹路径、写入位置、日记格式等）</li>
+      <li>工具会根据你的回答创建对应的 Skill 文件夹</li>
+      <li>创建完成后，按照工具给出的测试请求试跑一次</li>
+    </ol>
+    <p style="margin-top:8px; font-size: 0.84rem; opacity: 0.85;">这些提示词不会直接处理你的文件。它们的作用是帮你创建一个可复用的 Skill。真正处理文件、提取待办或生成总结，是安装完成后的 Skill 来做。</p>
+  </div>
+
+  <!-- MD 待办提取器 -->
   <div class="skill-hero">
     <span class="skill-tag">Skill</span>
     <span class="badge" style="background: var(--tag-blue); color: var(--tag-blue-text); margin-left:4px; vertical-align:middle;">仅 macOS</span>
     <h2>MD 待办提取器</h2>
     <p>从 Markdown 文件中智能提取待办事项，自动分类添加到 macOS 日历、提醒事项或备忘录。</p>
+    <a class="download-btn" href="md-todo-extractor-skill-create-prompt.md" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      下载安装提示词
+    </a>
   </div>
 
   <div class="card">
@@ -487,29 +587,10 @@
   </div>
 
   <div class="card">
-    <h2>安装</h2>
-    <ol>
-      <li>点击页面顶部按钮下载 <span class="inline-code">md-todo-extractor.zip</span></li>
-      <li>解压得到 <span class="inline-code">SKILL.md</span> 文件</li>
-      <li>将其复制到你所用 AI 工具的 Skills 目录，例如：</li>
-    </ol>
-    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code># Claude Code
-~/.claude/skills/md-todo-extractor/SKILL.md
-
-# 其他支持 Skill 的工具请参照其文档</code></pre></div>
-    <ol start="4">
-      <li>重启 AI 工具会话，Skill 自动加载</li>
-    </ol>
-  </div>
-
-  <div class="card">
     <h2>使用方法</h2>
     <h3>基本用法</h3>
     <p>在支持 Skill 的 AI 工具中，告诉 AI 你要分析的文件或文件夹：</p>
     <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code>帮我分析 ~/Documents/projects 下的待办事项</code></pre></div>
-
-    <h3>指定时间范围</h3>
-    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code>从 md 文件提取上周的待办，加入日历</code></pre></div>
 
     <h3>工作流程</h3>
     <ol>
@@ -527,20 +608,15 @@
     </ul>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- DIVIDER -->
-  <!-- ============================================================ -->
-  <div class="section-divider"></div>
-
-  <!-- ============================================================ -->
-  <!-- SECTION: Skill — 工作总结生成器 -->
-  <!-- ============================================================ -->
-  <div id="skill-summary"></div>
-
+  <!-- 工作总结生成器 -->
   <div class="skill-hero" style="border-left-color: var(--tag-green);">
     <span class="skill-tag" style="background: var(--tag-green); color: var(--tag-green-text);">Skill</span>
     <h2>工作总结生成器</h2>
     <p>从日记、会议记录、碎片笔记中生成多风格深度工作总结。核心理念：不要复述做了什么，要说出发现了什么。</p>
+    <a class="download-btn" href="work-summary-skill-create-prompt.md" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      下载安装提示词
+    </a>
   </div>
 
   <div class="card">
@@ -586,32 +662,10 @@
   </div>
 
   <div class="card">
-    <h2>安装</h2>
-    <ol>
-      <li>点击页面顶部按钮下载 <span class="inline-code">work-summary.zip</span></li>
-      <li>解压得到 <span class="inline-code">SKILL.md</span> 和 <span class="inline-code">references/styles.md</span></li>
-      <li>保持目录结构复制到你所用 AI 工具的 Skills 目录，例如：</li>
-    </ol>
-    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code># Claude Code
-~/.claude/skills/work-summary/
-├── SKILL.md
-└── references/
-    └── styles.md
-
-# 其他支持 Skill 的工具请参照其文档</code></pre></div>
-    <ol start="4">
-      <li>重启 AI 工具会话，Skill 自动加载</li>
-    </ol>
-  </div>
-
-  <div class="card">
     <h2>使用方法</h2>
     <h3>基本用法</h3>
     <p>在支持 Skill 的 AI 工具中，告诉 AI 你想总结哪段时间：</p>
     <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code>帮我总结今天的工作</code></pre></div>
-
-    <h3>指定时间范围</h3>
-    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code>总结本周的工作，风格选1和13</code></pre></div>
 
     <h3>工作流程</h3>
     <ol>
@@ -623,14 +677,28 @@
 
     <h3>Obsidian 集成</h3>
     <p>如果 Obsidian 正在运行且支持 CLI，Skill 会优先通过 CLI 操作文件（读取、追加、创建、搜索），无需手动指定完整路径。</p>
-    <div class="code-wrap"><button class="copy-btn" title="复制"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button><pre><code># 读取日记
-obsidian read path="日记文件夹/日记2026-05-12.md"
+  </div>
 
-# 追加总结到文件
-obsidian append path="日记文件夹/日记2026-05-12.md" content="..."
+  <!-- ============================================================ -->
+  <!-- DIVIDER -->
+  <!-- ============================================================ -->
+  <div class="section-divider"></div>
 
-# 创建独立总结文件
-obsidian create path="日记文件夹/总结2026-05-12.md" content="..."</code></pre></div>
+  <!-- ============================================================ -->
+  <!-- SECTION: 视频教程 -->
+  <!-- ============================================================ -->
+  <div id="resources" class="section-banner resources-banner">
+    <div class="banner-icon">🎬</div>
+    <div class="banner-text">
+      <h2>视频教程</h2>
+      <p>配套视频教程和更多资源，帮你快速上手</p>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <h3>Shiki 的免费启动仓库和剪藏插件</h3>
+    <p>百度网盘：<a href="https://pan.baidu.com/s/1PeRNFGdmnBrW4296XT5UZQ?pwd=cdtp" target="_blank">https://pan.baidu.com/s/1PeRNFGdmnBrW4296XT5UZQ</a></p>
+    <p>提取码：<span class="inline-code">cdtp</span></p>
   </div>
 
 </div>
