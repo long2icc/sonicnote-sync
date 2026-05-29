@@ -15,7 +15,7 @@ export interface SonicNotePluginSettings {
   frontmatterFields: Record<string, boolean>;
   customFrontmatter: CustomFrontmatterField[];
   token: string;
-  phoneNumber: string;
+  apiKey: string;
   lastSyncTime: string;
 }
 
@@ -53,7 +53,7 @@ export const DEFAULT_SETTINGS: SonicNotePluginSettings = {
   },
   customFrontmatter: [],
   token: '',
-  phoneNumber: '',
+  apiKey: '',
   lastSyncTime: '',
 };
 

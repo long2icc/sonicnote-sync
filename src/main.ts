@@ -56,7 +56,7 @@ export default class SonicNoteSyncPlugin extends Plugin {
       name: '登出',
       callback: async () => {
         this.settings.token = '';
-        this.settings.phoneNumber = '';
+        this.settings.apiKey = '';
         await this.saveSettings();
         new Notice('已登出 SonicNote');
         this.updateStatusBar();

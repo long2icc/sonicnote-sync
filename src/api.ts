@@ -52,9 +52,9 @@ export class SonicNoteApiClient {
     }
   }
 
-  async login(phone: string, code: string): Promise<{ token: string; userId: string }> {
-    const res = await this.request('POST', '/app/user/loginByPhone', {
-      body: { phonenumber: phone, code: code },
+  async login(apiKey: string): Promise<{ token: string; userId: string }> {
+    const res = await this.request('POST', '/app/mcp/login', {
+      body: { apiKey },
     });
     if (res.code !== 200) {
       throw new Error(res.msg || '登录失败');

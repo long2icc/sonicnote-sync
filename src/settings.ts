@@ -177,15 +177,18 @@ export class SonicNoteSettingTab extends PluginSettingTab {
     loginSection.createEl('h3', { text: '账号' });
 
     if (this.api.isAuthenticated()) {
+      const maskedKey = settings.apiKey.length > 10
+        ? settings.apiKey.slice(0, 10) + '...'
+        : settings.apiKey;
       new Setting(loginSection)
         .setName('登录状态')
-        .setDesc(`已登录: ${settings.phoneNumber}`)
+        .setDesc(`已登录: ${maskedKey}`)
         .addButton(btn => btn
           .setButtonText('登出')
           .setWarning()
           .onClick(async () => {
             settings.token = '';
-            settings.phoneNumber = '';
+            settings.apiKey = '';
             await this.saveSettings();
             new Notice('已登出');
             this.display();
@@ -193,7 +196,7 @@ export class SonicNoteSettingTab extends PluginSettingTab {
     } else {
       new Setting(loginSection)
         .setName('登录')
-        .setDesc('使用手机号和验证码登录智音笔记')
+        .setDesc('使用 API Key 登录 SonicNote')
         .addButton(btn => btn
           .setButtonText('登录')
           .onClick(() => {
@@ -229,38 +232,34 @@ class LoginModal extends Modal {
 
     contentEl.createEl('h2', { text: '登录 SonicNote' });
 
-    let phone = '';
-    let code = '';
+    let apiKey = '';
 
     new Setting(contentEl)
-      .setName('手机号')
-      .addText(text => text
-        .setPlaceholder('请输入手机号')
-        .onChange((value) => { phone = value; }));
-
-    new Setting(contentEl)
-      .setName('密码')
-      .setDesc('使用 APP 验证码或者申领长期密码')
-      .addText(text => text
-        .setPlaceholder('请输入密码')
-        .onChange((value) => { code = value; }));
+      .setName('API Key')
+      .setDesc('在妙记 App → 我的 → API Key 管理中创建')
+      .addText(text => {
+        text
+          .setPlaceholder('sk-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx')
+          .onChange((value) => { apiKey = value; });
+        text.inputEl.type = 'password';
+      });
 
     new Setting(contentEl)
       .addButton(btn => btn
         .setButtonText('登录')
         .setCta()
         .onClick(async () => {
-          if (!phone || !code) {
-            new Notice('请输入手机号和密码');
+          if (!apiKey) {
+            new Notice('请输入 API Key');
             return;
           }
           try {
             btn.setButtonText('登录中...');
             btn.setDisabled(true);
-            const result = await this.api.login(phone, code);
+            const result = await this.api.login(apiKey);
             const settings = this.getSettings();
             settings.token = result.token;
-            settings.phoneNumber = phone;
+            settings.apiKey = apiKey;
             await this.saveSettings();
             new Notice('登录成功');
             this.close();

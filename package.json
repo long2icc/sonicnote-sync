@@ -1,6 +1,6 @@
 {
   "name": "sonicnote-sync",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Sync recordings from SonicNote to Obsidian as Markdown files",
   "main": "main.js",
   "scripts": {
