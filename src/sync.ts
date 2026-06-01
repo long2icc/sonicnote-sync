@@ -46,6 +46,7 @@ export class SyncService {
       } catch (e) {
         const msg = e instanceof Error ? e.message : '获取录音列表失败';
         result.errorMessages.push(msg);
+        console.error('[SonicNote] 获取录音列表失败:', e);
         new Notice(`同步失败: ${msg}`);
         return result;
       }
@@ -66,7 +67,9 @@ export class SyncService {
       } catch (e) {
         result.errors++;
         const msg = e instanceof Error ? e.message : '未知错误';
-        result.errorMessages.push(`${recording.recordNickName || recording.recordName}: ${msg}`);
+        const name = recording.recordNickName || recording.recordName;
+        result.errorMessages.push(`${name}: ${msg}`);
+        console.error(`[SonicNote] 同步失败 — ${name} (${recording.audioId}):`, e);
       }
     }
 
