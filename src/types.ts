@@ -114,6 +114,7 @@ export interface StudyReportData {
 export interface LocalFileInfo {
   path: string;
   syncTime: string;
+  recordNickName: string;
 }
 
 export interface SyncResult {

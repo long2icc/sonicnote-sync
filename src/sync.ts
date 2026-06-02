@@ -1,7 +1,7 @@
 import { App, Notice, TFile, TFolder } from 'obsidian';
 import { SonicNoteApiClient } from './api';
 import { SonicNotePluginSettings, LocalFileInfo, Recording, SyncResult, TranscriptSegment, SummaryData, StudyReportData } from './types';
-import { formatFileName, sanitizeFileName, toMarkdown } from './formatter';
+import { formatFileName, toMarkdown } from './formatter';
 
 export class SyncService {
   private api: SonicNoteApiClient;
@@ -100,8 +100,9 @@ export class SyncService {
         const content = await this.app.vault.read(file);
         const audioId = this.extractFrontmatterField(content, 'audio_id');
         const syncTime = this.extractFrontmatterField(content, 'sync_time');
+        const recordNickName = this.extractFrontmatterField(content, 'record_nick_name') || '';
         if (audioId) {
-          index.set(audioId.replace(/"/g, ''), { path: file.path, syncTime: syncTime || '' });
+          index.set(audioId.replace(/"/g, ''), { path: file.path, syncTime: syncTime || '', recordNickName });
         }
       } catch {
         // Skip files that can't be read
@@ -121,23 +122,22 @@ export class SyncService {
 
     const local = localIndex.get(recording.audioId);
 
-    // Already synced — check if file still has original name but server has a summarized title
+    // Already synced — update if record_nick_name changed (e.g. summary generated)
     if (local && local.path) {
-      const hasNewTitle = recording.recordNickName && recording.recordNickName !== recording.recordName;
-      const localBaseName = local.path.split('/').pop()?.replace(/\.md$/, '') || '';
-      const originalName = sanitizeFileName(recording.recordName || '');
+      const currentNickName = recording.recordNickName || '';
+      if (local.recordNickName === currentNickName) return;
 
-      if (hasNewTitle && localBaseName === originalName) {
-        // Overwrite content and rename to new title
-        const content = await this.buildRecordingContent(recording, syncTime);
-        const newFileName = formatFileName(recording);
-        const newFilePath = `${settings.syncFolder}/${newFileName}.md`;
-        const oldFile = this.app.vault.getAbstractFileByPath(local.path);
-        if (oldFile instanceof TFile) {
-          await this.app.vault.modify(oldFile, content);
+      // Title changed — update content and rename
+      const content = await this.buildRecordingContent(recording, syncTime);
+      const newFileName = formatFileName(recording);
+      const newFilePath = `${settings.syncFolder}/${newFileName}.md`;
+      const oldFile = this.app.vault.getAbstractFileByPath(local.path);
+      if (oldFile instanceof TFile) {
+        await this.app.vault.modify(oldFile, content);
+        if (oldFile.path !== newFilePath) {
           await this.app.vault.rename(oldFile, newFilePath);
-          localIndex.set(recording.audioId, { path: newFilePath, syncTime });
         }
+        localIndex.set(recording.audioId, { path: newFilePath, syncTime, recordNickName: currentNickName });
       }
       return;
     }
@@ -147,7 +147,7 @@ export class SyncService {
     const fileName = formatFileName(recording);
     const filePath = `${settings.syncFolder}/${fileName}.md`;
     await this.app.vault.create(filePath, content);
-    localIndex.set(recording.audioId, { path: filePath, syncTime });
+    localIndex.set(recording.audioId, { path: filePath, syncTime, recordNickName: recording.recordNickName || '' });
   }
 
   private async buildRecordingContent(recording: Recording, syncTime: string): Promise<string> {
