@@ -112,8 +112,8 @@ export class SyncService {
   }
 
   private extractFrontmatterField(content: string, field: string): string | null {
-    const match = content.match(new RegExp(`^${field}:\\s*"?([^"]*)"\\s*$`, 'm'));
-    return match ? match[1] : null;
+    const match = content.match(new RegExp(`^${field}:\\s*"?([^"\\n]*)"?(?:\\s*$)`, 'm'));
+    return match ? match[1].trim() : null;
   }
 
   private async processRecording(recording: Recording, localIndex: Map<string, LocalFileInfo>, settings: SonicNotePluginSettings): Promise<void> {
