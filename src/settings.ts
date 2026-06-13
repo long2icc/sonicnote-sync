@@ -26,7 +26,7 @@ export class SonicNoteSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('SonicNote Sync 设置')
+			.setName('设置')
 			.setHeading();
 
 		// Sync folder

@@ -46,7 +46,7 @@ export class SonicNoteApiClient {
 		} catch (e: unknown) {
 			const err = e as { json?: BackendResponse; message?: string };
 			if (err?.json) {
-				return err.json as BackendResponse;
+				return err.json;
 			}
 			console.error(`[SonicNote] 请求失败 ${method} ${path}:`, err?.message || e);
 			throw new Error(err?.message || `请求失败: ${method} ${path}`);

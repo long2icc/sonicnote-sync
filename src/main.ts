@@ -1,8 +1,12 @@
-import { Notice, Plugin } from 'obsidian';
+import { App, Notice, Plugin } from 'obsidian';
 import { SonicNoteApiClient } from './api';
 import { SyncService } from './sync';
 import { SonicNoteSettingTab } from './settings';
 import { DEFAULT_SETTINGS, SonicNotePluginSettings } from './types';
+
+interface AppWithSetting extends App {
+	setting: { open: () => void; openTabById: (id: string) => void };
+}
 
 export default class SonicNoteSyncPlugin extends Plugin {
 	settings: SonicNotePluginSettings = DEFAULT_SETTINGS;
@@ -15,7 +19,6 @@ export default class SonicNoteSyncPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// Initialize API client and sync service
 		this.api = new SonicNoteApiClient(() => this.settings);
 		this.syncService = new SyncService(
 			this.app,
@@ -44,10 +47,9 @@ export default class SonicNoteSyncPlugin extends Plugin {
 			id: 'login',
 			name: '登录',
 			callback: () => {
-				// @ts-ignore - internal API to open settings
-				this.app.setting.open();
-				// @ts-ignore
-				this.app.setting.openTabById('sonicnote-sync');
+				const app = this.app as AppWithSetting;
+				app.setting.open();
+				app.setting.openTabById('sonicnote-sync');
 			},
 		});
 
@@ -89,7 +91,8 @@ export default class SonicNoteSyncPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		const saved = await this.loadData() as Partial<SonicNotePluginSettings> | null;
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, saved);
 	}
 
 	async saveSettings() {
