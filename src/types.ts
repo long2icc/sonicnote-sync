@@ -89,7 +89,7 @@ export interface Recording {
 export interface TranscriptSegment {
 	spokesperson: string;
 	text: string;
-	time: number;
+	time: string;
 }
 
 export interface SummaryData {

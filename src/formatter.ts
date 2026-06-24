@@ -14,22 +14,6 @@ export function formatFileName(recording: Recording): string {
   return sanitizeFileName(displayName);
 }
 
-function formatDuration(seconds: string | number): string {
-  const s = Number(seconds) || 0;
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = Math.floor(s % 60);
-  if (h > 0) {
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-  }
-  return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-}
-
-function formatTranscriptTime(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  return formatDuration(totalSeconds);
-}
-
 export function generateFrontmatter(recording: Recording, syncTime: string, settings: SonicNotePluginSettings): string {
   const fields = settings.frontmatterFields;
   const lines: string[] = ['---'];
@@ -81,7 +65,7 @@ export function formatTranscript(segments: TranscriptSegment[]): string {
   if (!segments || segments.length === 0) return '';
 
   return segments.map(seg => {
-    const time = formatTranscriptTime(seg.time);
+    const time = seg.time || '00:00';
     const speaker = seg.spokesperson || '未知';
     return `**[${time}] ${speaker}：** ${seg.text}`;
   }).join('\n\n');
